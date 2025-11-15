@@ -22,6 +22,12 @@
   ">Calculate</button>
   <p class="js-total-cost"></p>
 
+    <button onclick="loginWithFacebook()">Login with Facebook</button>
+
+<p id="status"></p>
+<img id="profilePic" width="100" />
+
+
     <script>
       String(25)
       console.log('25' - 5);
@@ -60,10 +66,53 @@
           buttonElement.innerHTML = 'Subscribe';
         }
       }
+    
+  // Load Facebook SDK
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      :"844419068143963",  // <-- replace this
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v20.0'
+    });
+  };
 
-    </script>
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+  // Login function
+  function loginWithFacebook() {
+    FB.login(function(response) {
+      if (response.status === 'connected') {
+        getUserData();
+      } else {
+        document.getElementById("status").innerHTML = "Login failed.";
+      }
+    }, {scope: 'public_profile,email'}); 
+  }
+
+  // Fetch User Data
+  function getUserData() {
+    FB.api('/me', {fields: 'name,email,picture'}, function(response) {
+        document.getElementById("status").innerHTML =
+          "Welcome, " + response.name + "<br>Email: " + response.email;
+
+        document.getElementById("profilePic").src =
+          response.picture.data.url;
+    });
+  }
+
+
+
+  </script>
   </body>
 </html>
+
 
 
 
